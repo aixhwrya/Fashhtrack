@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FashhTrack</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: url('images/index.jpg') no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: beige;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 30px;
+      color: #f1c40f;
+      text-shadow: 2px 2px 8px #000;
+    }
+
+    .main-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 90%;
+      max-width: 1200px;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    .panel {
+      flex: 1;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #f1c40f;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      font-size: 16px;
+      background-color: #f1c40f;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: black;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #d4ac0d;
+    }
+
+    .middle {
+      border-left: 2px solid #555;
+      border-right: 2px solid #555;
+    }
+
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #ddd;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Welcome to FASHHtrack</h1>
+
+  <div class="main-container">
+    <!-- Left Panel: Login -->
+    <div class="panel">
+      <h2>Login</h2>
+      <button class="btn" onclick="redirectTo('customer')">Customer Login</button><br><br>
+      <button class="btn" onclick="redirectTo('staff')">Staff Login</button><br><br>
+      <button class="btn" onclick="redirectTo('admin')">Admin Login</button>
+    </div>
+
+    <!-- Center Panel: Available Designs -->
+    <div class="panel middle">
+      <h2>Browse Designs</h2>
+      <button class="btn" onclick="window.location.href='available-designs.html'">Available Designs</button>
+    </div>
+
+    <!-- Right Panel: Signup -->
+    <div class="panel">
+      <h2>New Here?</h2>
+      <button class="btn" onclick="window.location.href='signup.html'">Sign Up</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    &copy; 2025 FashhTrack. Crafted with ❤️ by Aishwarya Ravi.
+  </div>
+
+  <script>
+    function redirectTo(role) {
+      window.location.href = `login.html?role=${role}`;
+    }
+  </script>
+</body>
+</html>

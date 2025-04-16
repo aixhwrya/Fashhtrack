@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Order | Admin - FashhTrack</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: #f5f5dc;
+      padding: 20px;
+    }
+    h2 {
+      color: #ffd700;
+      text-align: center;
+    }
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+    label {
+      display: block;
+      margin: 12px 0 5px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      background-color: #2a2a2a;
+      border: 1px solid #444;
+      color: #f5f5dc;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 15px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #statusMsg {
+      margin-top: 10px;
+      font-weight: bold;
+      color: lightgreen;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2>Edit Order</h2>
+
+  <form id="editOrderForm">
+    <input type="hidden" id="orderId" />
+    
+    <label for="measurements">Measurements</label>
+    <textarea id="measurements" required></textarea>
+
+    <label for="requirements">Requirements</label>
+    <textarea id="requirements"></textarea>
+
+    <label for="quantity">Quantity</label>
+    <input type="number" id="quantity" required min="1" />
+
+    <button type="submit">Update Order</button>
+    <div id="statusMsg"></div>
+  </form>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get("id");
+
+    if (!token || !orderId) {
+      alert("Unauthorized access. Redirecting to login...");
+      window.location.href = "login.html";
+    }
+
+    document.getElementById("orderId").value = orderId;
+
+    async function loadOrderDetails() {
+      try {
+        const res = await fetch(`http://localhost:5500/api/orders/${orderId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch order");
+
+        const order = await res.json();
+        document.getElementById("measurements").value = order.measurements;
+        document.getElementById("requirements").value = order.requirements || '';
+        document.getElementById("quantity").value = order.quantity;
+      } catch (error) {
+        console.error(error);
+        document.getElementById("statusMsg").textContent = "❌ Error loading order details.";
+        document.getElementById("statusMsg").style.color = "red";
+      }
+    }
+
+    loadOrderDetails();
+
+    document.getElementById("editOrderForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const measurements = document.getElementById("measurements").value;
+      const requirements = document.getElementById("requirements").value;
+      const quantity = document.getElementById("quantity").value;
+
+      try {
+        const res = await fetch("http://localhost:5500/api/orders/updateDetails", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            id: orderId,
+            measurements,
+            requirements,
+            quantity
+          })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          document.getElementById("statusMsg").textContent = data.message;
+          document.getElementById("statusMsg").style.color = "lightgreen";
+        } else {
+          throw new Error(data.message);
+        }
+      } catch (error) {
+        document.getElementById("statusMsg").textContent = "❌ Error updating order.";
+        document.getElementById("statusMsg").style.color = "red";
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>

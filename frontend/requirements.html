@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FashhTrack - Custom Requirements</title>
+    <style>
+        body {
+            background-color: black;
+            font-family: Arial, sans-serif;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            text-align: center;
+            background-color: #2c3e50;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            color: #f1c40f;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #34495e;
+            border-radius: 4px;
+            background-color: #34495e;
+            color: white;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #f1c40f;
+            border: none;
+            border-radius: 4px;
+            color: black;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #d4ac0d;
+        }
+
+        #message {
+            color: red;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Submit Custom Requirements</h2>
+        <form id="requirementsForm">
+            <select id="designType" required>
+                <option value="">Select Design</option>
+                <option value="lehenga">Lehenga</option>
+                <option value="gown">Gown</option>
+                <option value="kurti">Kurti</option>
+                <option value="saree">Saree</option>
+            </select>
+            <input type="text" id="fabricChoice" placeholder="Preferred Fabric (optional)">
+            <textarea id="customRequirements" placeholder="Enter your specific design requirements..." required></textarea>
+            <button type="submit">Submit Requirements</button>
+        </form>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        document.getElementById("requirementsForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const designType = document.getElementById("designType").value;
+            const fabricChoice = document.getElementById("fabricChoice").value.trim();
+            const customRequirements = document.getElementById("customRequirements").value.trim();
+            const message = document.getElementById("message");
+
+            if (!designType) {
+                message.textContent = "❌ Please select a design!";
+                return;
+            }
+            if (!customRequirements) {
+                message.textContent = "❌ Please enter your custom requirements!";
+                return;
+            }
+
+            try {
+                const res = await fetch('http://localhost:5500/api/submit-requirements', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ designType, fabricChoice, customRequirements })
+                });
+
+                const data = await res.json();
+                message.textContent = data.message;
+
+                if (res.ok) {
+                    message.style.color = "lightgreen";
+                    setTimeout(() => {
+                        window.location.href = "customer-dashboard.html"; // Redirect to customer dashboard
+                    }, 2000);
+                } else {
+                    message.style.color = "red";
+                }
+            } catch (error) {
+                message.textContent = "❌ Server error. Try again later!";
+                message.style.color = "red";
+            }
+        });
+    </script>
+</body>
+</html>

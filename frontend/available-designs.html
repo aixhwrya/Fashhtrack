@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FashhTrack - Available Designs</title>
+  <style>
+    body {
+      background: url("images/index.jpg") no-repeat center center fixed;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      color: white;
+      margin: 0;
+      padding: 0;
+      backdrop-filter: brightness(0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      padding: 30px;
+      text-align: center;
+      background-color: rgba(44, 62, 80, 0.9);
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+    }
+
+    h2 {
+      color: #f1c40f;
+      margin-bottom: 25px;
+    }
+
+    .design-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .design-item {
+      width: 200px;
+      background-color: #5c4033;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+      transition: transform 0.3s ease-in-out;
+      cursor: pointer;
+    }
+
+    .design-item:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.3);
+    }
+
+    .design-item img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .design-item h3 {
+      margin: 10px 0 5px;
+      font-size: 18px;
+      color: #f1c40f;
+    }
+
+    .design-item p {
+      font-size: 14px;
+      color: #ecf0f1;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #2e2e2e;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+      width: 360px;
+      text-align: center;
+      z-index: 100;
+    }
+
+    .modal img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .modal h3 {
+      color: #f1c40f;
+      margin-bottom: 5px;
+    }
+
+    .modal p {
+      font-size: 14px;
+      color: #ecf0f1;
+    }
+
+    .thumbs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+
+    .thumbs img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border 0.3s;
+    }
+
+    .thumbs img:hover {
+      border: 2px solid #f1c40f;
+    }
+
+    .close-btn {
+      background-color: #e74c3c;
+      color: white;
+      padding: 5px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 90;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Available Designs</h2>
+    <div class="design-list" id="designList"></div>
+  </div>
+
+  <div class="overlay" id="overlay" onclick="closeModal()"></div>
+  <div class="modal" id="designModal">
+    <img id="modalImage" src="" alt="Design Preview">
+    <h3 id="modalTitle"></h3>
+    <p id="modalDescription"></p>
+    <div class="thumbs" id="thumbGallery"></div>
+    <button class="close-btn" onclick="closeModal()">Close</button>
+  </div>
+
+  <script>
+    const designs = [
+      { name: "Bridal Lehenga", description: "A stunning bridal lehenga with intricate embroidery.", images: ["images/bridallehenga.jpg", "images/bridallehenga1.jpg"] },
+      { name: "Lehenga", description: "Chic lehenga with modern patterns.", images: ["images/lehenga.jpg", "images/lehenga1.jpg"] },
+      { name: "Patiala Suit", description: "Trendy kurti for casual and festive wear.", images: ["images/kurti1.jpg", "images/kurti11.jpg"] },
+      { name: "Kurti ", description: "Graceful kurti with detailed prints.", images: ["images/kurti2.jpg", "images/kurti22.jpg"] },
+      { name: "Gown", description: "Royal gown with flare and finesse.", images: ["images/gown.jpg", "images/gown1.jpg"] },
+      { name: "Sherwani", description: "Traditional sherwani with royal design.", images: ["images/sherwani.jpg", "images/sherwani1.jpg"] },
+      { name: "Saree", description: "Graceful saree with soft fabric and elegant border.", images: ["images/saree.jpg", "images/saree1.jpg"] },
+      { name: "Anarkali Suit", description: "Regal anarkali for festivals & parties.", images: ["images/anarkali.jpg", "images/anarkali1.jpg"] },
+      { name: "Salwar Suit", description: "Perfect blend of comfort and style.", images: ["images/salwarsuit.jpg", "images/salwarsuit1.jpg"] },
+      { name: "Party Gown", description: "Stylish party gown with shimmer fabric.", images: ["images/partygown.jpg", "images/partygown1.jpg"] },
+      { name: "Princess Gown", description: "Fit for a fairytale celebration.", images: ["images/princessgown1.jpg", "images/princessgown2.jpg"] },
+      { name: "Nehru Jacket", description: "A stylish nehru jacket for festive occasions.", images: ["images/nehrujacket1.jpg", "images/nehrujacket2.jpg"] },
+      { name: "Office Blazer", description: "Professional blazer for formal settings.", images: ["images/officeblazer.jpg"] },
+      { name: "T-Shirt & Shorts Set", description: "Casual wear set perfect for summer.", images: ["images/tshirt&shortset.jpg"] },
+      { name: "Denim Jacket", description: "Classic blue denim jackets - front and back.", images: ["images/denimjacket.jpg"] }
+    ];
+
+    const designList = document.getElementById("designList");
+    const modal = document.getElementById("designModal");
+    const overlay = document.getElementById("overlay");
+    const modalImage = document.getElementById("modalImage");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalDescription = document.getElementById("modalDescription");
+    const thumbGallery = document.getElementById("thumbGallery");
+
+    designs.forEach((design, index) => {
+      const card = document.createElement("div");
+      card.className = "design-item";
+      card.onclick = () => openModal(index);
+      card.innerHTML = `
+        <img src="${design.images[0]}" alt="${design.name}">
+        <h3>${design.name}</h3>
+        <p>${design.description}</p>
+      `;
+      designList.appendChild(card);
+    });
+
+    function openModal(index) {
+      const design = designs[index];
+      modalImage.src = design.images[0];
+      modalTitle.textContent = design.name;
+      modalDescription.textContent = design.description;
+      thumbGallery.innerHTML = "";
+
+      design.images.forEach(img => {
+        const thumb = document.createElement("img");
+        thumb.src = img;
+        thumb.onclick = () => modalImage.src = img;
+        thumbGallery.appendChild(thumb);
+      });
+
+      modal.style.display = "block";
+      overlay.style.display = "block";
+    }
+
+    function closeModal() {
+      modal.style.display = "none";
+      overlay.style.display = "none";
+    }
+  </script>
+</body>
+</html>

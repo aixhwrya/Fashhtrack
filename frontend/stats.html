@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FashhTrack - Stats Overview</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background-color: #121212;
+      color: #f5f5dc;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .chart-container {
+      max-width: 700px;
+      margin: 30px auto;
+      background-color: #1f1f1f;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 400px !important;
+    }
+
+    .back-btn {
+      margin: 20px auto;
+      display: block;
+      padding: 10px 20px;
+      background-color: #be9b7b;
+      border: none;
+      border-radius: 6px;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .back-btn:hover {
+      background-color: #d2b48c;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 FashhTrack Statistics</h1>
+
+  <div class="chart-container">
+    <h3>Total Orders vs Pending Shipments</h3>
+    <canvas id="ordersChart"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <h3>Customer Count</h3>
+    <canvas id="customersChart"></canvas>
+  </div>
+
+  <button class="back-btn" onclick="window.location.href='admin-dashboard.html'">🔙 Back to Dashboard</button>
+
+  <script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Session expired! Redirecting to login...");
+      window.location.href = "login.html";
+    }
+
+    fetch("http://localhost:5500/api/dashboard/stats", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      const { totalOrders = 0, totalCustomers = 0, pendingShipments = 0 } = data;
+
+      new Chart(document.getElementById("ordersChart"), {
+        type: "bar",
+        data: {
+          labels: ["Total Orders", "Pending Shipments"],
+          datasets: [{
+            label: "Order Overview",
+            backgroundColor: ["#3498db", "#e74c3c"],
+            data: [totalOrders, pendingShipments]
+          }]
+        }
+      });
+
+      new Chart(document.getElementById("customersChart"), {
+        type: "doughnut",
+        data: {
+          labels: ["Customers"],
+          datasets: [{
+            label: "Customer Count",
+            data: [totalCustomers],
+            backgroundColor: ["#2ecc71"]
+          }]
+        }
+      });
+    })
+    .catch(err => {
+      console.error("Stats load error:", err);
+      alert("Failed to load statistics.");
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Staff Dashboard | FashhTrack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #1a1a1a, #2c2c2c);
+      color: #fdfdfd;
+    }
+
+    header {
+      background-color: #242424;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #facc15;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    .logout {
+      background-color: #be9b7b;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .logout:hover {
+      background-color: #d2b48c;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-evenly;
+      background-color: #333;
+      padding: 0.75rem 0;
+      font-size: 0.95rem;
+    }
+
+    nav a {
+      color: #f3f3f3;
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffd700;
+      transform: scale(1.05);
+    }
+
+    .dashboard {
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: #1f1f1f;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(255, 255, 255, 0.08);
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 18px rgba(255, 255, 255, 0.1);
+    }
+
+    .card h3 {
+      color: #facc15;
+      margin-top: 0;
+    }
+
+    .card p {
+      color: #ccc;
+    }
+
+    .btn {
+      background-color: #facc15;
+      color: #1f1f1f;
+      padding: 0.6rem 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 1rem;
+      display: inline-flex;
+      align-items: center;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #ffe066;
+    }
+
+    .btn i {
+      margin-right: 8px;
+    }
+
+    .toast {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: #2ecc71;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      display: none;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div><i class="fas fa-user-cog"></i> Staff Panel</div>
+    <button class="logout" onclick="logout()">Logout</button>
+  </header>
+
+  <nav>
+    <a href="staff-dashboard.html">Dashboard</a>
+    <a href="manage-orders.html">Manage Orders</a>
+    <a href="inventory.html">Inventory</a>
+    <a href="fabric-tracking.html">Fabric Tracker</a>
+    <a href="profile.html">Profile</a>
+  </nav>
+
+  <div class="dashboard">
+    <div class="card">
+      <h3><i class="fas fa-user-circle"></i> Welcome, <span id="staffName">Staff</span>!</h3>
+      <p>Email: <span id="staffEmail">Loading...</span></p>
+      <p>Role: Staff</p>
+    </div>
+
+    <div class="card">
+      <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+      <button class="btn" onclick="location.href='manage-orders.html'"><i class="fas fa-clipboard-check"></i> Manage Orders</button>
+      <br/>
+      <button class="btn" onclick="location.href='inventory.html'"><i class="fas fa-boxes"></i> Update Inventory</button>
+      <br/>
+      <button class="btn" onclick="location.href='fabric-tracking.html'"><i class="fas fa-ruler"></i> Fabric Tracker</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("userRole");
+
+    if (!token || role?.toLowerCase() !== "staff") {
+      alert("Access denied! Redirecting to login...");
+      window.location.href = "login.html";
+    }
+
+    document.getElementById("staffName").textContent = localStorage.getItem("userName") || "Staff";
+    document.getElementById("staffEmail").textContent = localStorage.getItem("userEmail") || "Loading...";
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "login.html";
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.style.display = "block";
+      setTimeout(() => toast.style.display = "none", 3000);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      showToast("✅ Staff Dashboard Loaded");
+    });
+  </script>
+
+</body>
+</html>

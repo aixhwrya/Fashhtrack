@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fabric Tracking - FashhTrack</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #f5f5f5;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 30px;
+      background: #1e1e1e;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #444;
+    }
+    th {
+      background-color: #2a2a2a;
+    }
+    tr:hover {
+      background-color: #2d2d2d;
+    }
+    .no-data {
+      text-align: center;
+      margin-top: 20px;
+      color: #ccc;
+    }
+    .form-section {
+      margin-top: 40px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background-color: #2a2a2a;
+      color: #f5f5f5;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #5e3bee;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #472dcf;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Leftover Fabric Tracker</h2>
+
+    <table id="fabricTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Fabric Type</th>
+          <th>Quantity (m)</th>
+          <th>Color</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="no-data" id="noDataMessage" style="display: none;">No leftover fabric found.</div>
+
+    <div class="form-section">
+      <h3>Add New Leftover Fabric</h3>
+      <form id="addFabricForm">
+        <div class="form-group">
+          <label for="fabricType">Fabric Type:</label>
+          <input type="text" id="fabricType" name="fabric_type" required>
+        </div>
+        <div class="form-group">
+          <label for="quantity">Quantity (meters):</label>
+          <input type="number" step="0.01" id="quantity" name="quantity" required>
+        </div>
+        <div class="form-group">
+          <label for="color">Color:</label>
+          <input type="text" id="color" name="color" required>
+        </div>
+        <div class="form-group">
+          <label for="purpose">Purpose:</label>
+          <textarea id="purpose" name="purpose" required></textarea>
+        </div>
+        <button type="submit">Add Fabric</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const tableBody = document.getElementById('tableBody');
+    const noDataMessage = document.getElementById('noDataMessage');
+    const addFabricForm = document.getElementById('addFabricForm');
+
+    if (!token) {
+      alert("Access denied. Please login first.");
+      window.location.href = "login.html";
+    }
+
+    async function fetchFabricData() {
+      tableBody.innerHTML = '';
+      noDataMessage.style.display = 'none';
+
+      try {
+        const res = await fetch('http://localhost:5500/api/leftover', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const data = await res.json();
+        if (res.ok && data.length > 0) {
+          data.forEach(fabric => {
+            const row = `
+              <tr>
+                <td>${fabric.id}</td>
+                <td>${fabric.fabric_type}</td>
+                <td>${fabric.quantity}</td>
+                <td>${fabric.color}</td>
+                <td>${fabric.purpose}</td>
+              </tr>
+            `;
+            tableBody.innerHTML += row;
+          });
+        } else {
+          noDataMessage.style.display = 'block';
+        }
+      } catch (err) {
+        console.error('Error loading fabric data:', err);
+        noDataMessage.textContent = 'Error fetching fabric data.';
+        noDataMessage.style.display = 'block';
+      }
+    }
+
+    addFabricForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const fabricType = document.getElementById('fabricType').value;
+      const quantity = parseFloat(document.getElementById('quantity').value);
+      const color = document.getElementById('color').value;
+      const purpose = document.getElementById('purpose').value;
+
+      try {
+        const res = await fetch('http://localhost:5500/api/leftover', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ fabric_type: fabricType, quantity, color, purpose })
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          alert('✅ Leftover fabric added successfully!');
+          addFabricForm.reset();
+          fetchFabricData();
+        } else {
+          alert('❌ Error: ' + result.message);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('❌ An error occurred while adding fabric.');
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", fetchFabricData);
+  </script>
+</body>
+</html>

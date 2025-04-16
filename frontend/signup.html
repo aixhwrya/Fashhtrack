@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FashhTrack - Signup</title>
+  <style>
+    /* Reset default styles */  
+    body, h1, h2, form {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Page background */
+    body {
+      background: url('images/background.jpg') no-repeat center center/cover;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    /* Title Styling */
+    .title {
+      text-align: center;
+      margin-bottom: 20px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .title h1 {
+      font-size: 28px;
+      font-weight: bold;
+      color: lavender;
+    }
+
+    /* Form Container with background image */
+    .container {
+        background: url('./images/fan-5528162_1280.jpg') no-repeat center center/cover;
+
+      background-blend-mode: overlay;
+      padding: 20px;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      margin-top: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    h2 {
+      color: lavender;
+      margin-bottom: 15px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    input, select {
+      padding: 12px;
+      margin: 8px 0;
+      width: 100%;
+      border-radius: 4px;
+      border: 1px solid #888;
+      background-color: #333;
+      color: white;
+      font-size: 16px;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: lavender;
+    }
+
+    button {
+      padding: 12px;
+      width: 100%;
+      background-color: lavender;
+      border: none;
+      border-radius: 4px;
+      color: black;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #d1a7f7;
+    }
+
+    p {
+      color: white;
+      font-size: 14px;
+    }
+
+    a {
+      color: lavender;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    #message {
+      margin-top: 10px;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Title Section -->
+  <div class="title">
+    <h1>FashhTrack</h1>
+  </div>
+
+  <!-- Signup Form -->
+  <div class="container">
+    <h2>Sign Up</h2>
+    <form id="signupForm">
+      <input type="text" id="name" placeholder="Full Name" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="text" id="phone" placeholder="Phone (10 digits)" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <select id="role">
+        <option value="customer">Customer</option>
+        <option value="staff">Staff</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button type="submit">Sign Up</button>
+      <p>Already have an account? <a href="login.html">Login here</a></p>
+    </form>
+    <p id="message"></p>
+  </div>
+
+  <!-- Script -->
+  <script src="js/signup.js"></script>
+</body>
+</html>

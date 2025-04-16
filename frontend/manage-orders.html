@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manage Orders | Admin - FashhTrack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: #f5f5dc;
+      padding: 20px;
+    }
+    h2 {
+      color: #ffd700;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #1e1e1e;
+      color: #f5f5dc;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #2a2a2a;
+      color: #ffd700;
+    }
+    .btn {
+      padding: 6px 10px;
+      margin: 2px;
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    .edit-btn { background-color: #ffc107; color: #000; }
+    .delete-btn { background-color: #dc3545; color: #fff; }
+    .update-btn { background-color: #28a745; color: #fff; }
+    select {
+      background-color: #2a2a2a;
+      color: #f5f5dc;
+      border: 1px solid #444;
+      padding: 4px;
+    }
+    #statusMsg {
+      margin-top: 10px;
+      font-weight: bold;
+      color: lightgreen;
+    }
+  </style>
+</head>
+<body>
+  <h2>Manage Orders</h2>
+
+  <div id="statusMsg"></div>
+
+  <table id="ordersTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>User ID</th>
+        <th>Design ID</th>
+        <th>Measurements</th>
+        <th>Requirements</th>
+        <th>Quantity</th>
+        <th>Status</th>
+        <th>Order Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="9" style="text-align:center;">Loading orders...</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Link to external JS file -->
+  <script src="js/manage-orders.js"></script>
+</body>
+</html>

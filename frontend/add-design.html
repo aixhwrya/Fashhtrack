@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Add New Design | FashhTrack Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: #f5f5dc;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ffd700;
+    }
+
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #1f1f1f;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 8px;
+      background-color: #2c2c2c;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    input:focus, textarea:focus {
+      outline: 2px solid #ffd700;
+    }
+
+    button {
+      background-color: #be9b7b;
+      color: #000;
+      padding: 12px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #d2b48c;
+    }
+
+    .status {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .back-link {
+      color: #be9b7b;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <a href="admin-dashboard.html" class="back-link">← Back to Dashboard</a>
+  <h2>➕ Add New Design</h2>
+
+  <form id="addDesignForm">
+    <label for="name">Design Name</label>
+    <input type="text" id="name" required autofocus placeholder="e.g., Summer Vibe Kurti" />
+
+    <label for="description">Description</label>
+    <textarea id="description" rows="4" required placeholder="Brief description of the design..."></textarea>
+
+    <label for="price">Price (₹)</label>
+    <input type="number" id="price" min="0" required placeholder="Enter price in INR" />
+
+    <button type="submit">✅ Add Design</button>
+    <div class="status" id="statusMsg"></div>
+  </form>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("userRole");
+    const statusMsg = document.getElementById("statusMsg");
+
+    if (!token || role !== "admin") {
+      alert("Access denied. Redirecting to login...");
+      window.location.href = "login.html";
+    }
+
+    document.getElementById("addDesignForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const description = document.getElementById("description").value.trim();
+      const price = document.getElementById("price").value;
+
+      if (!name || !description || price === "") {
+        statusMsg.textContent = "❌ Please fill out all fields.";
+        statusMsg.style.color = "red";
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:5500/api/designs/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ name, description, price })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          statusMsg.textContent = data.message || "✅ Design added successfully!";
+          statusMsg.style.color = "lightgreen";
+          document.getElementById("addDesignForm").reset();
+        } else {
+          statusMsg.textContent = data.message || "❌ Failed to add design.";
+          statusMsg.style.color = "red";
+        }
+      } catch (error) {
+        console.error("Error adding design:", error);
+        statusMsg.textContent = "❌ Server error!";
+        statusMsg.style.color = "red";
+      }
+    });
+  </script>
+
+</body>
+</html>

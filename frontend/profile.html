@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FashhTrack - Profile</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 600px;
+      background: #2c3e50;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+      text-align: center;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      color: #ffd700;
+      margin-bottom: 10px;
+    }
+
+    .profile-info, .order-list {
+      text-align: left;
+      margin: 20px 0;
+    }
+
+    .profile-info p, .order-list p {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    .profile-info span, .order-list span {
+      font-weight: bold;
+      color: white;
+    }
+
+    .actions {
+      margin-top: 25px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      flex: 1;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .logout-btn {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .logout-btn:hover {
+      background: #c0392b;
+    }
+
+    .edit-btn {
+      background: #3498db;
+      color: white;
+    }
+
+    .edit-btn:hover {
+      background: #2980b9;
+    }
+
+    #loader {
+      margin-top: 20px;
+      font-style: italic;
+      color: lightgray;
+    }
+
+    .order-list h3 {
+      color: #ffd700;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Welcome, <span id="user-name">Loading...</span>!</h2>
+
+    <div id="loader">Fetching your profile...</div>
+
+    <div class="profile-info" id="profile-info" style="display: none;">
+      <p><span>Name:</span> <span id="name">-</span></p>
+      <p><span>Email:</span> <span id="email">-</span></p>
+      <p><span>Phone:</span> <span id="phone">-</span></p>
+      <p><span>Role:</span> <span id="role">-</span></p>
+    </div>
+
+    <div class="order-list" id="order-list" style="display: none;">
+      <h3>Your Orders</h3>
+      <div id="orders"></div>
+    </div>
+
+    <div class="actions">
+      <button class="edit-btn" onclick="editProfile()">Edit Profile</button>
+      <button class="logout-btn" onclick="logout()" id="logoutBtn">Log Out</button>
+    </div>
+  </div>
+
+  <!-- JS to handle profile -->
+  <script src="js/profile.js"></script>
+</body>
+</html>

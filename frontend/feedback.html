@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FashhTrack - Feedback</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: #121212;
+      font-family: 'Segoe UI', sans-serif;
+      color: #f5f5dc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #2c3e50;
+      padding: 30px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.1);
+    }
+    h2 {
+      color: #f1c40f;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    textarea, input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: none;
+      background: #34495e;
+      color: #fff;
+      font-size: 16px;
+    }
+    button {
+      background-color: #f1c40f;
+      color: black;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #d4ac0d;
+    }
+    #message {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>💬 Give Your Feedback</h2>
+    <form id="feedbackForm">
+      <input type="text" id="subject" placeholder="Subject" required />
+      <textarea id="messageText" placeholder="Enter your feedback here..." required></textarea>
+
+      <input type="number" id="orderId" placeholder="Order ID (optional)" />
+      
+      <select id="rating">
+        <option value="">Rate us (optional)</option>
+        <option value="1">⭐</option>
+        <option value="2">⭐⭐</option>
+        <option value="3">⭐⭐⭐</option>
+        <option value="4">⭐⭐⭐⭐</option>
+        <option value="5">⭐⭐⭐⭐⭐</option>
+      </select>
+
+      <button type="submit">Submit Feedback</button>
+    </form>
+    <p id="message"></p>
+  </div>
+
+  <script src="js/feedback.js"></script>
+</body>
+</html>

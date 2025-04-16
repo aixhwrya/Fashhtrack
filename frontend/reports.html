@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reports | FashhTrack</title>
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: #f5f5dc;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      color: #d2b48c;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #2c2c2c;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #333;
+      color: #d2b48c;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #d2b48c;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #b89b73;
+    }
+    .toast {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background-color: #28a745;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      display: none;
+      z-index: 9999;
+    }
+    .toast.error {
+      background-color: #e74c3c;
+    }
+    .back-link {
+      color: #be9b7b;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    @media screen and (max-width: 600px) {
+      table, th, td {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="admin-dashboard.html" class="back-link">← Back to Dashboard</a>
+  <h1>📊 Reports Dashboard</h1>
+
+  <h2>Order Status Summary</h2>
+  <table id="orderStatusTable">
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Total Orders</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Fabric Leftover Summary</h2>
+  <table id="fabricTable">
+    <thead>
+      <tr>
+        <th>Fabric Type</th>
+        <th>Color</th>
+        <th>Quantity (in meters)</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Sales Summary</h2>
+  <p id="salesSummary">Loading...</p>
+
+  <button onclick="exportToCSV()">📥 Export Report</button>
+
+  <div class="toast" id="toast">Report Ready!</div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const BASE_URL = "http://localhost:5500";
+
+    if (!token) {
+      alert("Access Denied. Redirecting to login.");
+      window.location.href = "login.html";
+    }
+
+    function showToast(message, isError = false) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.className = isError ? "toast error" : "toast";
+      toast.style.display = "block";
+      setTimeout(() => toast.style.display = "none", 3000);
+    }
+
+    async function fetchReports() {
+      try {
+        // ✅ Fetch order status summary
+        const orderRes = await fetch(`${BASE_URL}/api/reports/order-summary`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
+        const orderData = await orderRes.json();
+        const orderTbody = document.querySelector("#orderStatusTable tbody");
+        orderTbody.innerHTML = "";
+        orderData.forEach(row => {
+          orderTbody.innerHTML += `
+            <tr>
+              <td>${row.status}</td>
+              <td>${row.total}</td>
+            </tr>
+          `;
+        });
+
+        // ✅ Fetch leftover fabric
+        const fabricRes = await fetch(`${BASE_URL}/api/leftover`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
+        const fabricData = await fabricRes.json();
+        const fabricTbody = document.querySelector("#fabricTable tbody");
+        fabricTbody.innerHTML = "";
+        fabricData.forEach(f => {
+          fabricTbody.innerHTML += `
+            <tr>
+              <td>${f.fabric_type}</td>
+              <td>${f.color}</td>
+              <td>${f.quantity}</td>
+              <td>${f.purpose}</td>
+            </tr>
+          `;
+        });
+
+        const totalOrders = orderData.reduce((sum, row) => sum + row.total, 0);
+        document.getElementById("salesSummary").innerText = `Total Orders Placed: ${totalOrders}`;
+        showToast("✅ Reports loaded!");
+      } catch (error) {
+        console.error("Error fetching reports:", error);
+        showToast("❌ Failed to fetch reports", true);
+      }
+    }
+
+    function exportToCSV() {
+      const rows = [];
+      document.querySelectorAll("table").forEach(table => {
+        const headers = Array.from(table.querySelectorAll("th")).map(th => th.textContent);
+        rows.push(headers);
+        table.querySelectorAll("tbody tr").forEach(row => {
+          const cells = Array.from(row.querySelectorAll("td")).map(td => td.textContent);
+          rows.push(cells);
+        });
+        rows.push([]); // Add an empty line between tables
+      });
+
+      const csvContent = rows.map(r => r.join(",")).join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "fashhtrack_report.csv";
+      link.click();
+
+      showToast("📥 Report exported!");
+    }
+
+    fetchReports();
+  </script>
+</body>
+</html>

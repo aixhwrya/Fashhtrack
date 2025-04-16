@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Profile - FashhTrack</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background-color: #2c3e50;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    }
+
+    h2 {
+      text-align: center;
+      color: #3498db;
+    }
+
+    .back-link {
+      color: #be9b7b;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 15px;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input {
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <a class="back-link" href="profile.html">← Back to Profile</a>
+    <h2>Edit Profile</h2>
+    <form id="editProfileForm">
+      <label for="name">Name</label>
+      <input type="text" id="name" required />
+
+      <label for="phone">Phone</label>
+      <input type="text" id="phone" pattern="\d{10}" title="Enter a valid 10-digit number" />
+
+      <label for="password">New Password (optional)</label>
+      <input type="password" id="password" placeholder="Min 6 chars with UPPER, lower, number" />
+
+      <button type="submit">Update Profile</button>
+    </form>
+
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const token = localStorage.getItem("token");
+      const nameInput = document.getElementById("name");
+      const phoneInput = document.getElementById("phone");
+
+      if (!token) {
+        alert("Unauthorized. Please login.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:5500/api/users/profile", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const user = await res.json();
+        nameInput.value = user.name || "";
+        phoneInput.value = user.phone || "";
+
+      } catch (err) {
+        console.error("Failed to fetch profile:", err);
+        alert("Error loading profile.");
+      }
+    });
+
+    document.getElementById("editProfileForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const token = localStorage.getItem("token");
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const messageDiv = document.getElementById("message");
+
+      if (!name || !phone) {
+        messageDiv.textContent = "Name and phone are required.";
+        messageDiv.style.color = "orange";
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:5500/api/users/update-profile", {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ name, phone, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Failed to update profile");
+
+        messageDiv.textContent = "✅ Profile updated successfully!";
+        messageDiv.style.color = "lightgreen";
+
+      } catch (err) {
+        console.error("Update failed:", err);
+        messageDiv.textContent = `❌ ${err.message}`;
+        messageDiv.style.color = "red";
+      }
+    });
+  </script>
+
+</body>
+</html>

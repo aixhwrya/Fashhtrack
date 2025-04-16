@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add New User | FashhTrack Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: #f5f5dc;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ffd700;
+    }
+
+    form {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #1f1f1f;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(255, 215, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 16px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background-color: #2c2c2c;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    input:focus, select:focus {
+      outline: 2px solid #ffd700;
+    }
+
+    button {
+      background-color: #28a745;
+      color: #fff;
+      padding: 12px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    .status {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .back-link {
+      color: #be9b7b;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <a href="admin-dashboard.html" class="back-link">← Back to Dashboard</a>
+  <h2>👤 Add New User</h2>
+
+  <form id="addUserForm">
+    <label for="name">Full Name</label>
+    <input type="text" id="name" required autofocus placeholder="e.g., Aishwarya Ravi" />
+
+    <label for="email">Email</label>
+    <input type="email" id="email" required placeholder="e.g., user@example.com" />
+
+    <label for="phone">Phone Number</label>
+    <input type="text" id="phone" pattern="\d{10}" title="Phone number must be 10 digits" required placeholder="e.g., 9876543210" />
+
+    <label for="password">Password</label>
+    <input type="password" id="password" required placeholder="Min 6 chars, include UPPER, lower, number" />
+
+    <label for="role">Role</label>
+    <select id="role" required>
+      <option value="">-- Select Role --</option>
+      <option value="admin">Admin</option>
+      <option value="staff">Staff</option>
+      <option value="customer">Customer</option>
+    </select>
+
+    <button type="submit">✅ Add User</button>
+    <div class="status" id="statusMsg"></div>
+  </form>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("userRole");
+    const statusMsg = document.getElementById("statusMsg");
+
+    if (!token || role !== "admin") {
+      alert("Access denied. Redirecting to login...");
+      window.location.href = "login.html";
+    }
+
+    document.getElementById("addUserForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const password = document.getElementById("password").value;
+      const userRole = document.getElementById("role").value;
+
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+      if (!passwordRegex.test(password)) {
+        statusMsg.textContent = "⚠️ Password must have uppercase, lowercase, and number.";
+        statusMsg.style.color = "orange";
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:5500/api/users/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ name, email, phone, password, role: userRole })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          statusMsg.textContent = data.message || "✅ User added successfully!";
+          statusMsg.style.color = "lightgreen";
+          document.getElementById("addUserForm").reset();
+        } else {
+          statusMsg.textContent = data.message || "❌ Failed to add user.";
+          statusMsg.style.color = "red";
+        }
+      } catch (error) {
+        console.error("Error adding user:", error);
+        statusMsg.textContent = "❌ Server error!";
+        statusMsg.style.color = "red";
+      }
+    });
+  </script>
+
+</body>
+</html>
